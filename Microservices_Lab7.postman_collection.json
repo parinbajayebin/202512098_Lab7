@@ -1,0 +1,210 @@
+{
+  "info": {
+    "_postman_id": "9b12a8f4-3819-410a-8c9e-5b18f921d7b3",
+    "name": "Microservices – Lab 7 (API Gateway)",
+    "description": "Postman test suite for Lab 7: API Gateway, Configuration-Based Service Discovery & Cloud Deployment.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "GATEWAY_URL",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. API Gateway Management",
+      "item": [
+        {
+          "name": "GET /health (Gateway Health Check)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/health",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. User Service (via Gateway /users)",
+      "item": [
+        {
+          "name": "GET /users (List All Users)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "GET /users/:id (Get User by ID - 101)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users/101",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users", "101"]
+            }
+          }
+        },
+        {
+          "name": "POST /users (Create User - Ananya Iyer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ananya Iyer\",\n  \"email\": \"ananya.iyer@campus.edu.in\",\n  \"role\": \"student\"\n}"
+            },
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Product Service (via Gateway /products)",
+      "item": [
+        {
+          "name": "GET /products (List All Products)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/products",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["products"]
+            }
+          }
+        },
+        {
+          "name": "GET /products/:id (Get Product by ID - 501)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/products/501",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["products", "501"]
+            }
+          }
+        },
+        {
+          "name": "POST /products (Create Product - Geometry Kit)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Engineering Mini Drafter & Geometry Kit\",\n  \"price\": 450.00,\n  \"stock\": 50\n}"
+            },
+            "url": {
+              "raw": "{{GATEWAY_URL}}/products",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["products"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Order Service (via Gateway /orders)",
+      "item": [
+        {
+          "name": "GET /orders (List All Orders)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/orders",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "POST /orders (Create Order - Full End-to-End Validation)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"101\",\n  \"items\": [\n    {\n      \"productId\": \"501\",\n      \"quantity\": 1\n    },\n    {\n      \"productId\": \"502\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{GATEWAY_URL}}/orders",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "POST /orders (Invalid User 404 Test)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"999\",\n  \"items\": [\n    {\n      \"productId\": \"501\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{GATEWAY_URL}}/orders",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["orders"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Gateway Fault Tolerance & Error Handling",
+      "item": [
+        {
+          "name": "GET /users (Target Unreachable Test - 503)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

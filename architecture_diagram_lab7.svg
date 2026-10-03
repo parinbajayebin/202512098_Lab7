@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 780" width="100%" height="100%" style="background-color: #0f172a; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="clientGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="gatewayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="userGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="productGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="orderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="mongoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+
+    <!-- Drop Shadows -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrow-gateway" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#818cf8" />
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24" />
+    </marker>
+  </defs>
+
+  <!-- Title Header -->
+  <text x="525" y="40" fill="#f8fafc" font-size="22" font-weight="700" text-anchor="middle">CampusConnect API Gateway &amp; Cloud Microservices</text>
+  <text x="525" y="65" fill="#94a3b8" font-size="13" text-anchor="middle">Lab 7: Single Entry Point Gateway • Service Discovery • MongoDB Atlas</text>
+
+  <!-- 1. Client / Postman Layer -->
+  <g filter="url(#shadow)">
+    <rect x="365" y="90" width="320" height="60" rx="10" fill="url(#clientGrad)"/>
+    <text x="525" y="118" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle">Client / Postman (Internet)</text>
+    <text x="525" y="138" fill="#e0f2fe" font-size="11" text-anchor="middle">Calls single public endpoint</text>
+  </g>
+
+  <!-- Flow to Gateway -->
+  <path d="M 525 150 L 525 190" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="590" y="175" fill="#38bdf8" font-size="11" font-weight="600">Port :8080 (Public)</text>
+
+  <!-- 2. API Gateway Box -->
+  <g filter="url(#shadow)">
+    <rect x="225" y="195" width="600" height="95" rx="12" fill="url(#gatewayGrad)"/>
+    <text x="525" y="225" fill="#ffffff" font-size="17" font-weight="700" text-anchor="middle">🚪 API Gateway (api-gateway :8080)</text>
+    <text x="525" y="248" fill="#e0e7ff" font-size="12" text-anchor="middle">Single Entry Point • Config-Based Service Discovery • Centralized Error Handling</text>
+    <text x="525" y="272" fill="#c7d2fe" font-size="11" font-family="monospace" text-anchor="middle">/health | /users/* | /products/* | /orders/*</text>
+  </g>
+
+  <!-- 3. Docker Internal Network Container Boundary -->
+  <rect x="50" y="325" width="950" height="290" rx="16" fill="#1e293b" fill-opacity="0.7" stroke="#6366f1" stroke-width="2" stroke-dasharray="6"/>
+  <rect x="70" y="310" width="360" height="30" rx="6" fill="#4338ca"/>
+  <text x="250" y="330" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">🔒 Internal Docker Network (campus-network)</text>
+
+  <!-- Routes from Gateway to Internal Microservices -->
+  <path d="M 330 290 C 330 310, 190 320, 190 365" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow-gateway)"/>
+  <path d="M 525 290 L 525 365" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow-gateway)"/>
+  <path d="M 720 290 C 720 310, 860 320, 860 365" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow-gateway)"/>
+
+  <!-- USER SERVICE -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="375" width="240" height="150" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+    <rect x="80" y="375" width="240" height="35" rx="10" fill="url(#userGrad)"/>
+    <text x="200" y="398" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">User Service</text>
+    <text x="100" y="430" fill="#94a3b8" font-size="11">Internal: <tspan fill="#34d399">user-service:3001</tspan></text>
+    <text x="100" y="450" fill="#e2e8f0" font-size="11" font-family="monospace">GET /users</text>
+    <text x="100" y="470" fill="#e2e8f0" font-size="11" font-family="monospace">GET /users/:id</text>
+    <text x="100" y="490" fill="#e2e8f0" font-size="11" font-family="monospace">POST /users</text>
+  </g>
+
+  <!-- PRODUCT SERVICE -->
+  <g filter="url(#shadow)">
+    <rect x="405" y="375" width="240" height="150" rx="10" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+    <rect x="405" y="375" width="240" height="35" rx="10" fill="url(#productGrad)"/>
+    <text x="525" y="398" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">Product Service</text>
+    <text x="425" y="430" fill="#94a3b8" font-size="11">Internal: <tspan fill="#fbbf24">product-service:3002</tspan></text>
+    <text x="425" y="450" fill="#e2e8f0" font-size="11" font-family="monospace">GET /products</text>
+    <text x="425" y="470" fill="#e2e8f0" font-size="11" font-family="monospace">GET /products/:id</text>
+    <text x="425" y="490" fill="#e2e8f0" font-size="11" font-family="monospace">POST /products</text>
+  </g>
+
+  <!-- ORDER SERVICE -->
+  <g filter="url(#shadow)">
+    <rect x="730" y="375" width="240" height="150" rx="10" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+    <rect x="730" y="375" width="240" height="35" rx="10" fill="url(#orderGrad)"/>
+    <text x="850" y="398" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">Order Service</text>
+    <text x="750" y="430" fill="#94a3b8" font-size="11">Internal: <tspan fill="#f472b6">order-service:3003</tspan></text>
+    <text x="750" y="450" fill="#e2e8f0" font-size="11" font-family="monospace">GET /orders</text>
+    <text x="750" y="470" fill="#e2e8f0" font-size="11" font-family="monospace">POST /orders</text>
+    <text x="750" y="495" fill="#38bdf8" font-size="10" font-style="italic">Validates with User &amp; Product</text>
+  </g>
+
+  <!-- Internal Inter-Service Arrows -->
+  <path d="M 750 440 C 650 420, 360 420, 325 450" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)" stroke-dasharray="4"/>
+  <path d="M 730 465 L 650 465" fill="none" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrow-amber)" stroke-dasharray="4"/>
+
+  <!-- 4. MongoDB Atlas Cloud Database Layer -->
+  <g filter="url(#shadow)">
+    <rect x="250" y="660" width="550" height="85" rx="12" fill="url(#mongoGrad)"/>
+    <text x="525" y="695" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle">🍃 MongoDB Atlas (Cloud Database Cluster)</text>
+    <text x="525" y="720" fill="#d1fae5" font-size="12" text-anchor="middle">Persistent Cloud Storage per Service (Connected via MONGO_URI)</text>
+  </g>
+
+  <!-- Connectors to MongoDB Atlas -->
+  <path d="M 200 525 L 350 655" stroke="#10b981" stroke-width="2" stroke-dasharray="4"/>
+  <path d="M 525 525 L 525 655" stroke="#10b981" stroke-width="2" stroke-dasharray="4"/>
+  <path d="M 850 525 L 700 655" stroke="#10b981" stroke-width="2" stroke-dasharray="4"/>
+</svg>

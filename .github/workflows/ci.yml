@@ -1,0 +1,99 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # ==========================================
+  # Stage 1: Build & Unit Test All Services
+  # ==========================================
+  test-services:
+    name: Test Microservices
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [ api-gateway, user-service, product-service, order-service ]
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.service }}/package.json
+
+      - name: Install Dependencies
+        run: |
+          cd ${{ matrix.service }}
+          npm install
+
+      - name: Run Unit & Health Tests
+        run: |
+          cd ${{ matrix.service }}
+          npm test
+
+  # ==========================================
+  # Stage 2: Docker Build & Registry Delivery
+  # ==========================================
+  build-and-push-images:
+    name: Build & Push Container Images
+    needs: test-services
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [ api-gateway, user-service, product-service, order-service ]
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute Lowercase Image Name
+        id: meta
+        run: |
+          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME="${{ env.REGISTRY }}/${REPO_OWNER}/${{ matrix.service }}"
+          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+          echo "sha_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./${{ matrix.service }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ steps.meta.outputs.image_name }}:${{ steps.meta.outputs.sha_tag }}
+            ${{ steps.meta.outputs.image_name }}:latest
+            ${{ matrix.service }}:${{ steps.meta.outputs.sha_tag }}
+            ${{ matrix.service }}:latest
+
+      - name: Log Image Verification Details
+        run: |
+          echo "=========================================="
+          echo "Successfully built and versioned image:"
+          echo "Service:  ${{ matrix.service }}"
+          echo "Tag SHA:  ${{ steps.meta.outputs.sha_tag }}"
+          echo "Image:    ${{ steps.meta.outputs.image_name }}:${{ steps.meta.outputs.sha_tag }}"
+          echo "=========================================="
+

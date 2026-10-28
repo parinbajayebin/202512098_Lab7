@@ -1,0 +1,192 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "Lab 8 Microservices Health & Monitoring Overview",
+      "type": "row"
+    },
+    {
+      "id": 1,
+      "gridPos": { "h": 7, "w": 6, "x": 0, "y": 1 },
+      "type": "stat",
+      "title": "Question 1: Are Targets Reachable? (Availability)",
+      "description": "Checks if the API Gateway scrape target is UP (1 = UP, 0 = DOWN)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "up{job=\"gateway\"}",
+          "legendFormat": "Gateway Status",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "options": { "0": { "color": "red", "text": "DOWN" }, "1": { "color": "green", "text": "UP" } }, "type": "value" }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 7, "w": 6, "x": 6, "y": 1 },
+      "type": "stat",
+      "title": "Total API Requests Processed",
+      "description": "Cumulative count of all requests through the gateway",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(http_requests_total)",
+          "legendFormat": "Total Requests",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "green", "value": 10 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 7, "w": 6, "x": 12, "y": 1 },
+      "type": "stat",
+      "title": "Question 3: Are Failures Increasing? (4xx / 5xx)",
+      "description": "Rate of client (4xx) and server (5xx) HTTP errors",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(http_requests_total{status=~\"[45]..\"}[1m])) or vector(0)",
+          "legendFormat": "Error Rate (req/s)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.1 },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "unit": "reqps"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 7, "w": 6, "x": 18, "y": 1 },
+      "type": "gauge",
+      "title": "Process Resident Memory (MB)",
+      "description": "Gateway RSS memory consumption in MB",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "process_resident_memory_bytes / 1024 / 1024",
+          "legendFormat": "Gateway RAM (MB)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 128 },
+              { "color": "red", "value": 256 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 8 },
+      "type": "timeseries",
+      "title": "Question 2: How Much Traffic Is Arriving? (Traffic Rate)",
+      "description": "Per-route request arrival rate over time (req/s)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(http_requests_total[1m])) by (route, method)",
+          "legendFormat": "{{method}} {{route}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth"
+          },
+          "unit": "reqps"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 8 },
+      "type": "timeseries",
+      "title": "Question 4: How Long Are Requests Taking? (Latency)",
+      "description": "Average request execution duration in seconds",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate(http_request_duration_seconds_sum[1m])) / sum(rate(http_request_duration_seconds_count[1m]))",
+          "legendFormat": "Avg Latency (s)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth"
+          },
+          "unit": "s"
+        }
+      }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["lab8", "microservices", "kubernetes", "prometheus"],
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "title": "Lab 8 - CampusConnect Microservices Dashboard",
+  "uid": "lab8-microservices"
+}
+

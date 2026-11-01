@@ -17,3 +17,4 @@ EXPOSE 8080
 
 # Start API Gateway
 CMD ["node", "server.js"]
+

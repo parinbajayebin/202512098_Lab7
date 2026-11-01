@@ -85,8 +85,6 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.image_name }}:${{ steps.meta.outputs.sha_tag }}
             ${{ steps.meta.outputs.image_name }}:latest
-            ${{ matrix.service }}:${{ steps.meta.outputs.sha_tag }}
-            ${{ matrix.service }}:latest
 
       - name: Log Image Verification Details
         run: |

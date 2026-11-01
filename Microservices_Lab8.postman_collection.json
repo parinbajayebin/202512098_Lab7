@@ -1,0 +1,188 @@
+{
+  "info": {
+    "name": "Microservices – Lab 8 (Kubernetes, CI/CD & Monitoring)",
+    "_postman_id": "lab8-k8s-prometheus-grafana",
+    "description": "Postman test suite for Lab 8: Kubernetes Gateway access, User/Product/Order services, Prometheus metrics, and traffic generation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "GATEWAY_URL",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "NODEPORT_URL",
+      "value": "http://localhost:30080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Gateway & Probes",
+      "item": [
+        {
+          "name": "GET /health (Liveness & Readiness Probe Check)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/health",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "GET /metrics (Prometheus Metric Scrape Endpoint)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/metrics",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["metrics"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. User Service (via Gateway /users)",
+      "item": [
+        {
+          "name": "GET /users (List All Users)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "GET /users/:id (Get User by ID - 101)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users/101",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users", "101"]
+            }
+          }
+        },
+        {
+          "name": "POST /users (Create New User)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Neha Gupta\",\n  \"email\": \"neha.gupta@campus.edu.in\",\n  \"role\": \"student\"\n}"
+            },
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Product Service (via Gateway /products)",
+      "item": [
+        {
+          "name": "GET /products (List All Products)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/products",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["products"]
+            }
+          }
+        },
+        {
+          "name": "GET /products/:id (Get Product by ID - 501)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/products/501",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["products", "501"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Order Service (via Gateway /orders)",
+      "item": [
+        {
+          "name": "GET /orders (List All Orders)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/orders",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "POST /orders (Create Order with Cross-Service Validation)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"101\",\n  \"items\": [\n    {\n      \"productId\": \"501\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{GATEWAY_URL}}/orders",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["orders"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Error & Failure Metrics Generation",
+      "item": [
+        {
+          "name": "GET /users/99999 (Non-Existent User - 404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/users/99999",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["users", "99999"]
+            }
+          }
+        },
+        {
+          "name": "GET /unknown-route (Unknown Gateway Route - 404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{GATEWAY_URL}}/unknown-route",
+              "host": ["{{GATEWAY_URL}}"],
+              "path": ["unknown-route"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
